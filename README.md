@@ -28,8 +28,6 @@ Download the extracted vision features from [vision_features](https://drive.goog
 
 checkout [shell cmd](readme/usage.txt)
 
-```
-
 ## Citing MM-CoT
 
 ```
