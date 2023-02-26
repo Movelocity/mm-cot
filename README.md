@@ -26,7 +26,7 @@ Download the extracted vision features from [vision_features](https://drive.goog
 
 ### Training | Inference
 
-checkout [shell cmd](usage.txt)
+checkout [shell cmd](readme/usage.txt)
 
 ```
 
