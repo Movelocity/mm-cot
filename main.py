@@ -52,7 +52,7 @@ def parse_args():
 
     args = parser.parse_args()
     return args
-        
+
 def T5Trainer(dataframe, args,):
     torch.manual_seed(args.seed)  # pytorch random seed
     np.random.seed(args.seed)  # numpy random seed
@@ -62,7 +62,7 @@ def T5Trainer(dataframe, args,):
         save_dir = args.evaluate_dir
         args.model = args.evaluate_dir
 
-    tokenizer = T5Tokenizer.from_pretrained(args.model)
+    tokenizer = T5Tokenizer.from_pretrained(args.model)  # default allenai/unifiedqa-t5-base
 
     console.log(f"""[Model]: Loading {args.model}...\n""")
     console.log(f"[Data]: Reading data...\n")
