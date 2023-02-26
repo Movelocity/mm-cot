@@ -53,29 +53,27 @@ def parse_args():
     args = parser.parse_args()
     return args
         
-def T5Trainer(
-    dataframe, args,
-):
+def T5Trainer(dataframe, args,):
     torch.manual_seed(args.seed)  # pytorch random seed
     np.random.seed(args.seed)  # numpy random seed
     torch.backends.cudnn.deterministic = True
     
     if args.evaluate_dir is not None:
+        save_dir = args.evaluate_dir
         args.model = args.evaluate_dir
 
     tokenizer = T5Tokenizer.from_pretrained(args.model)
 
     console.log(f"""[Model]: Loading {args.model}...\n""")
     console.log(f"[Data]: Reading data...\n")
+
     problems = dataframe['problems']
     qids = dataframe['qids']
     train_qids = qids['train']
     test_qids = qids['test']
     val_qids = qids['val']
     
-    if args.evaluate_dir is not None:
-        save_dir = args.evaluate_dir
-    else:
+    if args.evaluate_dir is None:
         model_name = args.model.replace("/","-")
         gpu_count = torch.cuda.device_count()
         save_dir = f"{args.output_dir}/{args.user_msg}_{model_name}_{args.img_type}_{args.prompt_format}_lr{args.lr}_bs{args.bs * gpu_count}_op{args.output_len}_ep{args.epoch}"
@@ -152,18 +150,17 @@ def T5Trainer(
 
     datacollator = DataCollatorForSeq2Seq(tokenizer)
     print("model parameters: ", model.num_parameters())
+
     def extract_ans(ans):
         pattern = re.compile(r'The answer is \(([A-Z])\)')
         res = pattern.findall(ans)
         
-        if len(res) == 1:
-            answer = res[0]  # 'A', 'B', ...
-        else:
-            answer = "FAILED" 
+        if len(res) == 1: answer = res[0]  # 'A', 'B', ...
+        else: answer = "FAILED" 
         return answer  
 
-    # accuracy for answer inference
     def compute_metrics_acc(eval_preds):
+        """accuracy for answer inference"""
         if args.use_generate:
             preds, targets = eval_preds
             if isinstance(preds, tuple):
@@ -377,7 +374,4 @@ if __name__ == '__main__':
         problems, qids = load_data_std(args)  # probelms, test question ids, shot example ids
         dataframe = {'problems':problems, 'qids':qids}
 
-    T5Trainer(
-        dataframe=dataframe,
-        args = args
-    )
+    T5Trainer(dataframe=dataframe, args=args)

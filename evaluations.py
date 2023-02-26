@@ -3,7 +3,7 @@ Adapted from https://github.com/lupantech/ScienceQA
 '''
 
 import re
-from rouge import Rouge
+from rouge import Rouge  # https://blog.csdn.net/sdauguanweihong/article/details/122901907
 from nltk.translate.bleu_score import sentence_bleu
 from sentence_transformers import util
 
