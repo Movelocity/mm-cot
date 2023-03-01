@@ -1,0 +1,11 @@
+put model folders here
+
+- project
+---| models
+-----| MM-CoT-UnifiedQA-base-Answer
+-----| MM-CoT-UnifiedQA-base-Rationale
+---| vision_features
+---| readme
+---| LICENSE
+---| main.py
+...
