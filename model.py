@@ -1,9 +1,6 @@
 '''
 Adapted from https://github.com/huggingface/transformers
 '''
-
-from transformers import T5Config, T5ForConditionalGeneration
-from transformers.models.t5.modeling_t5 import T5Stack, __HEAD_MASK_WARNING_MSG, T5EncoderModel
 import copy
 import math
 import os
@@ -12,6 +9,9 @@ from typing import Optional, Tuple, Union
 import torch
 from torch import nn
 from torch.nn import CrossEntropyLoss
+
+from transformers import T5Config, T5ForConditionalGeneration
+from transformers.models.t5.modeling_t5 import T5Stack, __HEAD_MASK_WARNING_MSG, T5EncoderModel
 from transformers.modeling_outputs import (
     BaseModelOutput,
     Seq2SeqLMOutput,
@@ -30,16 +30,21 @@ class T5ForMultimodalGeneration(T5ForConditionalGeneration):
     def __init__(self, config: T5Config, patch_size, padding_idx, save_dir):
         super().__init__(config)
         self.model_dim = config.d_model
-        
+
         self.padding_idx = padding_idx
         self.out = open(os.path.join(save_dir, 'gate.txt'), 'w')
 
-        self.shared = nn.Embedding(config.vocab_size, config.d_model)
-        self.patch_num, self.patch_dim = patch_size
+        self.shared = nn.Embedding(config.vocab_size, config.d_model)  # 处理文字
+        self.patch_num, self.patch_dim = patch_size                    # 处理图像
 
-        self.image_dense = nn.Linear(self.patch_dim, config.d_model)
-        self.mha_layer = torch.nn.MultiheadAttention(embed_dim=config.hidden_size, kdim=config.hidden_size, vdim=config.hidden_size, num_heads=1, batch_first=True)
-        self.gate_dense = nn.Linear(2*config.hidden_size, config.hidden_size)
+        self.image_dense = nn.Linear(self.patch_dim, config.d_model)   # 图像 patch 到统一的 d_model
+        self.mha_layer = torch.nn.MultiheadAttention(
+            embed_dim=config.hidden_size, 
+            kdim=config.hidden_size, 
+            vdim=config.hidden_size, 
+            num_heads=1, 
+            batch_first=True)
+        self.gate_dense = nn.Linear(2*config.hidden_size, config.hidden_size)  # hidden_size == d_model
         self.sigmoid = nn.Sigmoid()
 
         encoder_config = copy.deepcopy(config)
@@ -111,7 +116,6 @@ class T5ForMultimodalGeneration(T5ForConditionalGeneration):
                 hidden_states=encoder_outputs[1] if len(encoder_outputs) > 1 else None,
                 attentions=encoder_outputs[2] if len(encoder_outputs) > 2 else None,
             )
-
 
         hidden_states = encoder_outputs[0]
         

@@ -62,11 +62,10 @@ def T5Trainer(dataframe, args,):
         save_dir = args.evaluate_dir
         args.model = args.evaluate_dir
 
+    console.log(f"""[Model]: Loading {args.model}...\n""")
     tokenizer = T5Tokenizer.from_pretrained(args.model)  # default allenai/unifiedqa-t5-base
 
-    console.log(f"""[Model]: Loading {args.model}...\n""")
     console.log(f"[Data]: Reading data...\n")
-
     problems = dataframe['problems']
     qids = dataframe['qids']
     train_qids = qids['train']
