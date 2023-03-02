@@ -1,3 +1,5 @@
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Movelocity/mm-cot/tree/main/readme/try-mm-cot.ipynb)
+
 # Multimodal Chain-of-Thought Reasoning in Language Models
 
 <h5 align="center"><i>"Imagine learning a textbook without figures or tables."</i></h5>
