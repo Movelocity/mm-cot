@@ -1,4 +1,4 @@
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Movelocity/mm-cot/tree/main/readme/try-mm-cot.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Movelocity/mm-cot/blob/main/readme/try-mm-cot.ipynb)
 
 # Multimodal Chain-of-Thought Reasoning in Language Models
 
