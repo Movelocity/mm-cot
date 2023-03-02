@@ -119,6 +119,8 @@ class T5ForMultimodalGeneration(T5ForConditionalGeneration):
 
         hidden_states = encoder_outputs[0]
         
+        if image_ids is None:
+            image_ids = torch.randn(hidden_states.size[0], patch_num, patch_dim)
         image_embedding = self.image_dense(image_ids)
         image_att, _ = self.mha_layer(hidden_states, image_embedding, image_embedding)
 
@@ -131,7 +133,7 @@ class T5ForMultimodalGeneration(T5ForConditionalGeneration):
 
         if labels is not None and decoder_input_ids is None and decoder_inputs_embeds is None:
             # get decoder inputs from shifting lm labels to the right
-            decoder_input_ids = self._shift_right(labels)
+            decoder_input_ids = self._shift_right(labels)  # 标签就是decoder的输入(training)
 
         # Set device for model parallelism
         if self.model_parallel:
@@ -184,7 +186,7 @@ class T5ForMultimodalGeneration(T5ForConditionalGeneration):
         if not return_dict:
             output = (lm_logits,) + decoder_outputs[1:] + encoder_outputs
             return ((loss,) + output) if loss is not None else output
-
+        self.generate(torch.tensor([1]))
         return Seq2SeqLMOutput(
             loss=loss,
             logits=lm_logits,

@@ -54,3 +54,218 @@ CUDA_VISIBLE_DEVICES=0,1 python main.py \
 774K	models/MM-CoT-UnifiedQA-base-Rationale/spiece.model
 2.5K	models/MM-CoT-UnifiedQA-base-Rationale/tokenizer_config.json
 4.0K	models/MM-CoT-UnifiedQA-base-Rationale/training_args.bin
+
+# Let's see what is in the dataset class
+
+>>> from utils_data import img_shape, load_data_std, load_data_img, ScienceQADatasetStd, ScienceQADatasetImg, HParams
+>>> import json
+>>> config = json.load(open('config.json'))
+>>> hps = HParams(**config['rationale_generation'])
+
+>>> problems, qids, name_maps, image_features = load_data_img(hps)
+
+>>> from transformers import T5Tokenizer
+>>> tokenizer = T5Tokenizer.from_pretrained("./models/MM-CoT-UnifiedQA-base-Rationale")
+
+>>> test_set = ScienceQADatasetImg(
+            problems, qids['test'], name_maps, 
+            tokenizer,
+            hps.input_len, hps.output_len, hps,
+            image_features, hps.test_le,
+        )
+img_features size:  (11208, 100, 256)
+number of train problems: 12726
+number of val problems: 4241
+number of test problems: 4241
+
+>>> data_piece = test_set.__getitem__(1)
+>>> data_piece.keys()
+dict_keys(['input_ids', 'attention_mask', 'image_ids', 'labels'])
+
+>>> data_piece['input_ids'].shape
+torch.Size([512])
+
+>>> data_piece['attention_mask'].shape
+torch.Size([512])
+
+>>> data_piece['image_ids'].shape
+torch.Size([100, 256])
+
+>>> len(data_piece['labels'])
+512
+
+>>> data_piece
+{'input_ids': tensor([11860,    10,  4073,    13,     8,   826,   228, 14626,    31,     7,
+           794,   504,    58,  1193,  6327,    10,  2449,    54,   169,     8,
+          3867,    18,  9124,   433,    12,  1344,  1275,    12,   982,     5,
+           555,  1147,    16,     8,   433,    19,  2505,     3,    99,     3,
+             9,  1055,  1127,  7864,     8,  1502,    13,     8,   408,     5,
+            37,  5454,   666,  8788,   149,     8,  3867,    18,  9124,   433,
+            47,   261,    12,   794,     3,     9,  1127,    12,     3,     9,
+           682,     5,  3403,     8,  5454,     5,    37,    29,  1525,     8,
+           822,   666,     5, 14626,    47,    46, 28674,  9739,   113,    47,
+          2421,     3,     9,   260,  1836,  2810,    21,     3,     9,   628,
+          6696,    24,   133,  1322,    30, 11856,     5,   216,   906,    12,
+           617,     3,     9,  9370,    44,     8,  1530,    13,     8,   260,
+          1836,  2810,    78,     8,   628,  6696,   133,  1322, 14000,     5,
+           611,     6,     8,   628,  6696,   133,    43,    12,  1111,    44,
+             3,     9,   306,  1634,   274,  9501,     5,   156,     8,  9370,
+            47,   396,   600,    42,   396,   422,     6,     8,   260,  1836,
+          2810,   429,  7180,     3, 28890,    44,    48,  1634,     5,    37,
+          2426,   228,  1783,     8,   628,  6696,     5,   264,     6,    12,
+           199,  2204,   149,   600,     8,  9370,   225,    36,     6, 14626,
+           474,     3,     9,   260,  1836,  2810,    28,     3,     9,   209,
+             3,    51,  9370,    16,     3,     9,  2943, 11916,     5,    37,
+          2943, 11916,   263,    34,  1727,   114,     8,   260,  1836,  2810,
+            47,  1735,    44,  2382,  2280,   399,  1781,     5,   216,  6970,
+             8,   260,  1836,  2810,    12,   217,   149,   231,    34,     3,
+             7,   210,   425,     5,  7996,    10,     3,     9,   628,  6696,
+            31,     7,   260,  1836,  2810,    16,     3,     9,  2943, 11916,
+             5, 17011,    10,    41,   188,    61,     3,    99,     8,   628,
+          6696,    47,  6780,   116,   338,     3,     9,   260,  1836,  2810,
+            28,     3,     9,   209,     3,    51,  9370,   352,  2382,  2280,
+           399,  1781,    41,   279,    61,   149, 11207,     3,     9,   260,
+          1836,  2810,    28,     3,     9,   209,     3,    51,  9370,    47,
+            44,  2382,  2280,   399,  1781,    41,   254,    61,   823,     3,
+             9,   260,  1836,  2810,    28,     3,     9,   209,     3,    51,
+          9370,   133,  7180,   396,   231,    44,  4837,  2280,   399,  1781,
+         17942,    10,     1,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+             0,     0]),
+ 'attention_mask': tensor([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0]),
+ 'image_ids': tensor([[-0.8545,  0.3047,  1.7793,  ...,  0.1000, -0.5366, -0.8232],
+         [-0.0031, -0.0968,  1.7148,  ..., -0.0856, -0.5674, -0.4851],
+         [-0.0228,  0.3081,  1.5234,  ...,  0.8164, -0.1324, -0.7817],
+         ...,
+         [ 0.0131, -0.0940,  1.2842,  ..., -0.3423, -0.1001, -0.4749],
+         [-0.2861,  0.4358,  1.6914,  ...,  1.0381, -0.3794, -0.3848],
+         [-0.3286,  0.1716,  1.7451,  ...,  0.9155, -0.3882, -0.8584]],
+        dtype=torch.float16),
+ 'labels': [17942,10,2449,54,169,8,3867,
+        18,9124,433,12,1344,1275,12,982,5,555,1147,16,8,433,19,2505,3,99,3,9,1055,1127,7864,
+        8,1502,13,8,408,5,571,54,25,2082,125,3,9,794,54,504,58,148,174,12,2320,91,125,47,5285,11,
+        125,47,8413,5,2,29,23372,15,46,9739,523,12,408,3,9,4716,21,3,9,2943,63,1128,5,451,2746,12,
+        143,417,8,4716,56,59,888,396,231,16,306,2943,5,264,6,255,15326,3,9,2755,14402,6,42,825,6,
+        13,3,9,4716,5,37,29,6,255,14644,7,8,14402,12,306,13551,11,3629,149,231,8,4716,6914,5,2,
+        29,25171,6,2862,125,47,5285,5,71,794,54,5443,80,408,6,42,34,164,4048,1317,14402,7,12,
+        284,119,5,86,8,794,3028,756,6,8,9739,5285,3,9,14402,13,3,9,4716,16,306,2943,5,2,29,
+        634,29,6,2862,125,8,794,8413,5,555,13,8,6683,21,8,4716,47,24,34,59,888,396,231,16,306,
+        13551,5,37,794,8413,149,231,8,14402,4716,2301,5,2,29,382,222,7,54,504,149,168,80,42,72,
+        ...
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+}
+
+
+>>> code = tokenizer.batch_decode(data_piece['input_ids'].unsqueeze(0), skip_special_tokens=True, clean_up_tokenization_spaces=True)
+["Question: Which of the following could Gordon's test show? Context: People can use the 
+engineering-design process to develop solutions to problems. One step in the process is 
+testing if a potential solution meets the requirements of the design. The passage below 
+describes how the engineering-design process was used to test a solution to a problem. 
+Read the passage. Then answer the question below. Gordon was an aerospace engineer who was 
+developing a parachute for a spacecraft that would land on Mars. He needed to add a vent at
+the center of the parachute so the spacecraft would land smoothly. However, the spacecraft 
+would have to travel at a high speed before landing. If the vent was too big or too small, 
+the parachute might swing wildly at this speed. The movement could damage the spacecraft. 
+So, to help decide how big the vent should be, Gordon put a parachute with a 1 m vent in a 
+wind tunnel. The wind tunnel made it seem like the parachute was moving at 200 km per hour. 
+He observed the parachute to see how much it swung. Figure: a spacecraft's parachute in 
+a wind tunnel. Options: (A) if the spacecraft was damaged when using a parachute with a 1 m 
+vent going 200 km per hour (B) how steady a parachute with a 1 m vent was at 200 km per hour 
+(C) whether a parachute with a 1 m vent would swing too much at 400 km per hour Solution:"]
+
+
+>>> tokenizer.batch_decode( \
+    torch.LongTensor(data_piece['labels']).unsqueeze(0), \
+    skip_special_tokens=True, clean_up_tokenization_spaces=True)
+['Solution: People can use the engineering-design process to develop solutions to problems. 
+One step in the process is testing if a potential solution meets the requirements of the 
+design. How can you determine what a test can show? You need to figure out what was tested 
+and what was measured.nImagine an engineer needs to design a bridge for a windy location. 
+She wants to make sure the bridge will not move too much in high wind. So, she builds a 
+smaller prototype, or model, of a bridge. Then, she exposes the prototype to high winds and 
+measures how much the bridge moves.nFirst, identify what was tested. A test can examine one 
+design, or it may compare multiple prototypes to each other. In the test described above, the 
+engineer tested a prototype of a bridge in high wind.nThen, identify what the test measured. 
+One of the criteria for the bridge was that it not move too much in high winds. The test 
+measured how much the prototype bridge moved.nTests can show how well one or more designs 
+meet the criteria. The test described above can show whether the bridge would move too much 
+in high winds..']
+
+
+
+model.py:132
+    if labels is not None and decoder_input_ids is None and decoder_inputs_embeds is None:
+        # get decoder inputs from shifting lm labels to the right
+        decoder_input_ids = self._shift_right(labels)
+    ...
+    # Decode
+    decoder_outputs = self.decoder(
+        input_ids=decoder_input_ids,  # labels are input_ids for decoder while training.
+        attention_mask=decoder_attention_mask,
+        inputs_embeds=decoder_inputs_embeds,
+        past_key_values=past_key_values,
+        encoder_hidden_states=hidden_states,
+        encoder_attention_mask=attention_mask,
+        head_mask=decoder_head_mask,
+        cross_attn_head_mask=cross_attn_head_mask,
+        ...
+    )
+
+model.py:272
+    predict_results = trainer.predict(test_dataset=test_set, max_length=args.output_len) 
+
+Transformers.trainer.py:2492
+    def compute_loss(self, model, inputs, return_outputs=False):
+        ...
+        outputs = model(**inputs)  # inputs are obtained from dataloader
+
+utils_data.py:223
+    class ScienceQADatasetImg:
+        ...
+        def __getitem__(self, index):
+            ...
+            return {
+                "input_ids": source_ids,
+                "attention_mask": source_mask,
+                "image_ids": image_ids,
+                "labels": target_ids,
+            }
+
+
+

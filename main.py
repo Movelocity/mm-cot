@@ -118,7 +118,7 @@ def T5Trainer(dataframe, args,):
             args.test_le,
         )
     else:
-        model = T5ForConditionalGeneration.from_pretrained(args.model) 
+        model = T5ForConditionalGeneration.from_pretrained(args.model)
         train_set = ScienceQADatasetStd(
             problems,
             train_qids,
@@ -219,8 +219,8 @@ def T5Trainer(dataframe, args,):
             evaluation_strategy="no",
             logging_strategy="steps",
             save_strategy="epoch",
-            save_total_limit = 2,
-            learning_rate= args.lr,
+            save_total_limit=2,
+            learning_rate=args.lr,
             eval_accumulation_steps=args.eval_acc,
             per_device_train_batch_size=args.bs,
             per_device_eval_batch_size=args.eval_bs,
@@ -258,14 +258,14 @@ def T5Trainer(dataframe, args,):
         eval_dataset=eval_set,
         data_collator=datacollator,
         tokenizer=tokenizer,
-        compute_metrics = compute_metrics_acc if args.prompt_format != "QCM-LE" else compute_metrics_rougel
+        compute_metrics=compute_metrics_acc if args.prompt_format != "QCM-LE" else compute_metrics_rougel
     )
 
     if args.evaluate_dir is None:
         trainer.train()
         trainer.save_model(save_dir)
         
-    metrics = trainer.evaluate(eval_dataset = test_set)
+    metrics = trainer.evaluate(eval_dataset=test_set)
     trainer.log_metrics("test", metrics)
     trainer.save_metrics("test", metrics)
 

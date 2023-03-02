@@ -217,7 +217,7 @@ def build_train_pair(problems, test_qid, args, curr_le_data=None):
                                       solution,
                                       test_example=False,WithOutput = True, curr_le_data=curr_le_data)
     examples.append(test_example)
-    
+
     target = target.replace("Answer:", "").strip()
     # create the prompt input
     prompt_input = '\n\n'.join(examples)
