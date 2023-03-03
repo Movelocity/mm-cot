@@ -120,7 +120,11 @@ class T5ForMultimodalGeneration(T5ForConditionalGeneration):
         hidden_states = encoder_outputs[0]
         
         if image_ids is None:
-            image_ids = torch.randn(hidden_states.shape[0], self.patch_num, self.patch_dim).to(hidden_states.device)
+            if os.path.exists('./visual_tmp_feature.pt'):            
+                image_ids = torch.load('./visual_tmp_feature.pt', map_location='cpu').to(hidden_states.device)
+                print(f'visual feature loaded {image_ids.shape}')
+            else:
+                image_ids = torch.randn(hidden_states.shape[0], self.patch_num, self.patch_dim).to(hidden_states.device)
         image_embedding = self.image_dense(image_ids)
         image_att, _ = self.mha_layer(hidden_states, image_embedding, image_embedding)
 
