@@ -227,6 +227,7 @@ class ScienceQADatasetImg(Dataset):
             "labels": target_ids,
         }
 
+# copied from: https://github.com/jaywalnut310/vits/blob/main/utils.py
 class HParams():
   def __init__(self, **kwargs):
     for k, v in kwargs.items():
